@@ -1,18 +1,18 @@
-#include "game_session.h"
 #include "game_server.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
+        return 1;
+    }
+
     try {
-        if(argc != 2) {
-            std::cerr << "Usage: server <port>\n";
-            return 1;
-        }
-        boost::asio::io_context io_context;
-        GameServer server(io_context, std::atoi(argv[1]));
-        io_context.run();
-    } catch(std::exception& e) {
-        std::cerr << "Exception: " << e.what() << "\n";
+        unsigned short port = std::stoi(argv[1]);
+        Server server(port);
+        server.run();
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
     }
 
     return 0;
