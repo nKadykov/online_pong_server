@@ -16,7 +16,7 @@ vcpkg install sfml:x64-windows
 
 6. Клонировать репозиторий:
 ```markdown
-git clone https://github.com/nKadykov/online_pong.git
+git clone https://github.com/nKadykov/online_pong_server.git
 ```
 
 8. Создать папку с проектом:
