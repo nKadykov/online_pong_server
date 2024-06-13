@@ -15,16 +15,20 @@ struct GameState {
 
 class Server {
 public:
-    Server(unsigned short port);
+    Server(unsigned short);
     void run();
 
 private:
     void accept();
-    void broadcast(const GameState& gameState);
-    std::vector<char> serialize(const GameState& gameState);
-    GameState deserialize(const std::vector<char>& data);
+    void cast();
+    void handle_client(std::shared_ptr<boost::asio::ip::tcp::socket>);
+    void broadcast(const std::vector<char>&);
+    std::vector<char> serialize(const GameState&);
+    GameState deserialize(const std::vector<char>&);
 
     boost::asio::io_context m_io_context;
     boost::asio::ip::tcp::acceptor m_acceptor;
-    std::set<std::shared_ptr<boost::asio::ip::tcp::socket>> m_clients;
+    std::set<std::shared_ptr<boost::asio::ip::tcp::socket>> m_client_set;
+    boost::asio::steady_timer m_timer;
+    GameState m_game_state;
 };
