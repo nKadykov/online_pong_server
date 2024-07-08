@@ -28,7 +28,7 @@ void Server::cast() {
     auto message = serialize(m_game_state);
     broadcast(message);
 
-    m_timer.expires_after(std::chrono::milliseconds(16));
+    m_timer.expires_after(std::chrono::milliseconds(1));
     m_timer.async_wait([this](boost::system::error_code error_code) {
         if(!error_code) {
             cast();
@@ -42,15 +42,12 @@ void Server::handle_client(std::shared_ptr<boost::asio::ip::tcp::socket> socket)
         if (!ec) {
             buffer->resize(length);
             auto client_state = deserialize(*buffer);
-            std::cout << "Received GameState: Ball(" << client_state.ball.x << ", " << client_state.ball.y << "), "
-                        << "Platform1(" << client_state.platform1.x << ", " << client_state.platform1.y << "), "
-                        << "Platform2(" << client_state.platform2.x << ", " << client_state.platform2.y << "), "
-                        << "Score(" << client_state.score1 << " - " << client_state.score2 << ")" << std::endl;
             m_game_state.ball = client_state.ball;
             m_game_state.platform1 = client_state.platform1;
             m_game_state.platform2 = client_state.platform2;
             m_game_state.score1 = client_state.score1;
             m_game_state.score2 = client_state.score2;
+            m_game_state.if_on = client_state.if_on;
             handle_client(socket);
         } else {
             m_client_set.erase(socket);
@@ -71,7 +68,7 @@ std::vector<char> Server::serialize(const GameState& gameState) {
 }
 
 GameState Server::deserialize(const std::vector<char>& data) {
-    GameState gameState;
-    std::memcpy(&gameState, data.data(), sizeof(GameState));
-    return gameState;
+    GameState game_state;
+    std::memcpy(&game_state, data.data(), sizeof(GameState));
+    return game_state;
 }
